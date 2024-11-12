@@ -1,18 +1,18 @@
 #!/bin/bash
 
-echo "Проверка наличия обновлений..."
+echo "Checking for updates..."
 git fetch origin
 
 LOCAL=$(git rev-parse HEAD)
 REMOTE=$(git rev-parse origin/main)
 
 if [ "$LOCAL" == "$REMOTE" ]; then
-    echo "Нет новых обновлений. Локальная и удаленная ветка синхронизированы."
+    echo "There are no new updates. The local and remote branches are synchronized."
     exit 0
 fi
 
-echo "Обновления доступны. Загружаем изменения..."
+echo "Updates are available. Uploading the changes..."
 git pull origin main
 
-echo "Проект успешно обновлен!"
+echo "The project has been successfully updated!"
 exit 0

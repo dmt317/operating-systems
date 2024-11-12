@@ -1,18 +1,18 @@
 @echo off
 
-echo Проверка наличия обновлений...
+echo Checking for updates...
 git fetch origin
 
 for /f "delims=" %%i in ('git rev-parse HEAD') do set LOCAL=%%i
 for /f "delims=" %%i in ('git rev-parse origin/main') do set REMOTE=%%i
 
 if "%LOCAL%"=="%REMOTE%" (
-    echo Нет новых обновлений. Локальная и удаленная ветка синхронизированы.
+    echo There are no new updates. The local and remote branches are synchronized.
     exit /b 0
 )
 
-echo Обновления доступны. Загружаем изменения...
+echo Updates are available. Uploading the changes...
 git pull origin main
 
-echo Проект успешно обновлен!
+echo The project has been successfully updated!
 exit /b 0
