@@ -1,9 +1,11 @@
-git pull origin main
+@echo off
+
+cd hello_world
 
 mkdir build
 cd build
 
-cmake ../hello_world
+cmake -G "MinGW Makefiles" ..
 
 cmake --build .
 

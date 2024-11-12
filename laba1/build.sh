@@ -1,7 +1,5 @@
 #!/bin/bash
 
-git pull origin main
-
 mkdir build
 cd build
 
