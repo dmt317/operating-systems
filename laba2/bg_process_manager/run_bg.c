@@ -20,11 +20,11 @@ int run_bg(const char* cmd) {
         // Start the child process
         if (!CreateProcess(NULL, (char*)cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
             printf("CreateProcess failed (%d).\n", GetLastError());
-            return;
+            return -1;
         }
         
         // Wait until child process exits
-        WaitForSinlgeObject(pi.hProcess, INFINITE);
+        WaitForSingleObject(pi.hProcess, INFINITE);
         
         DWORD exit_code;
         if (!GetExitCodeProcess(pi.hProcess, &exit_code)) {

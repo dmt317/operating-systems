@@ -5,9 +5,9 @@
 int main() {
     char command[256];
 
-    printf("Введите команду для выполнения: ");
+    printf("Enter command to execute: ");
     if (fgets(command, sizeof(command), stdin) == NULL) {
-        fprintf(stderr, "Ошибка ввода команды.\n");
+        fprintf(stderr, "Command input error.\n");
         return 1;
     }
 
@@ -19,9 +19,9 @@ int main() {
 
     int exit_code = run_bg(command);
     if (exit_code == -1) {
-        fprintf(stderr, "Ошибка запуска программы.\n");
+        fprintf(stderr, "Program launch error.\n");
     } else {
-        printf("Программа завершилась с кодом: %d\n", exit_code);
+        printf("The program ended with the code: %d\n", exit_code);
     }
 
     return 0;
