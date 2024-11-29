@@ -19,10 +19,12 @@ int main() {
 
     int exit_code = run_bg(command);
     if (exit_code == -1) {
-        fprintf(stderr, "Program launch error.\n");
+        fprintf(stderr, "Child process launch error.\n");
     } else {
-        printf("The program ended with the code: %d\n", exit_code);
+        printf("Child process ended with the code: %d\n", exit_code);
     }
+    
+    printf("The main process is completed.\n");
 
     return 0;
 }
