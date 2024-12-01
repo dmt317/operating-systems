@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "run_bg.h"
+#include "../include/run_bg.h"
 
 int main() {
     char command[256];
