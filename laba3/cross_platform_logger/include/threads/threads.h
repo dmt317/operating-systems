@@ -18,5 +18,4 @@ void stop_threads(int is_leader);
     void stop_threads_posix(pthread_t* threads, int is_leader);
 #endif
 
-
 #endif // THREADS_H

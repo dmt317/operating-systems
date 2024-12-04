@@ -36,8 +36,6 @@ int* create_shared_memory_posix(const char *name, size_t size) {
         exit(1);
     }
     
-    // memset(shared_mem, 0, size);
-    
     return counter;
 }
 
