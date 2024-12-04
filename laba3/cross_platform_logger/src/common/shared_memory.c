@@ -24,3 +24,19 @@ void close_shared_memory(const char *name, size_t size) {
         close_shared_memory_posix(counter, name, size);
     #endif
 }
+
+int connect_to_shared_memory(const char *name, size_t size) {
+    #ifdef _WIN32
+        return connect_to_shared_memory_windows(name, size);
+    #else
+        return connect_to_shared_memory_posix(name, size);
+    #endif
+}
+
+void detach_shared_memory(void) {
+    #ifdef _WIN32
+        detach_shared_memory_windows();
+    #else
+        detach_shared_memory_posix(counter);
+    #endif
+}

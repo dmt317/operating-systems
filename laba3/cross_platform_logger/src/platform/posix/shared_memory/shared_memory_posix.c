@@ -50,3 +50,33 @@ void close_shared_memory_posix(int *counter, const char *name, size_t size) {
         perror("shm_unlink");
     }
 }
+
+int connect_to_shared_memory_posix(const char* name, size_t size) {
+    int shm_fd = shm_open(name, O_RDWR, 0666);
+    if (shm_fd == -1) {
+        perror("Failed to open shared memory");
+        return -1;
+    }
+
+    counter = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (counter == MAP_FAILED) {
+        perror("Failed to map shared memory");
+        close(shm_fd);
+        return -1;
+    }
+    
+    close(shm_fd);
+
+    printf("Connected to shared memory: %s\n", name);
+    return 0;
+}
+
+void detach_shared_memory_posix(int* counter) {
+    if (counter) {
+        if (munmap(counter, sizeof(int)) == -1) {
+            perror("Failed to unmap shared memory");
+        } else {
+            printf("Shared memory detached successfully.\n");
+        }
+    }
+}

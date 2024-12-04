@@ -8,6 +8,7 @@ set(COMMON_FILES
     src/common/threads.c
     src/common/write_log.c
     src/common/shared_memory.c
+    src/common/is_leader.c
 )
 
 if (WIN32)
@@ -29,6 +30,7 @@ elseif (UNIX)
         src/platform/posix/threads/run_copies_posix.c
         src/platform/posix/utils/write_log_posix.c
         src/platform/posix/shared_memory/shared_memory_posix.c
+        src/platform/posix/utils/is_leader_posix.c
     )
 endif()
 

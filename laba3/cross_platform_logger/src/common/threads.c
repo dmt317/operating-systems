@@ -3,30 +3,36 @@
 
 #include "../../include/threads/threads.h"
 
-#define NUM_THREADS 4
+#define LEADER_THREADS 4
+#define PARTICIPANT_THREADS 2
 
-pthread_t threads[NUM_THREADS];
+pthread_t* threads = NULL;
 
-void create_threads(void) {
+void create_threads(int is_leader) {
+    int num_threads = is_leader ? LEADER_THREADS : PARTICIPANT_THREADS;
+    
     #ifdef _WIN32
         create_threads_windows();
     #else
-        pthread_t* threads_ptr = create_threads_posix();
-        if (threads_ptr == NULL) {
-            printf("Failed to create threads\n");
-        } else {
-            for (int i = 0; i < NUM_THREADS; i++) {
-                threads[i] = threads_ptr[i];
-            }
-            free(threads_ptr); 
+        threads = create_threads_posix(is_leader);
+        if (threads == NULL) {
+            fprintf(stderr, "Failed to create threads.\n");
+            return;
         }
     #endif
 }
 
-void stop_threads(void) {
+void stop_threads(int is_leader) {
     #ifdef _WIN32
         stop_threads_windows();
     #else
-        stop_threads_posix(threads);
+        if (threads == NULL) {
+            fprintf(stderr, "No threads to stop.\n");
+            return;
+        }
+    
+        stop_threads_posix(threads, is_leader);
+        free(threads); 
+        threads = NULL;
     #endif
 }
