@@ -5,9 +5,8 @@
 
 #include "../../../../include/threads/increment.h"
 #include "../../../../include/shared_memory/shared_memory.h"
+#include "../../../../include/utils/mutex.h"
 
-extern pthread_mutex_t mutex;
-extern pthread_mutex_t stop_mutex;
 extern int stop;
 
 void* increment_posix(void* arg) {
@@ -21,9 +20,9 @@ void* increment_posix(void* arg) {
         
         usleep(300000);
         
-        pthread_mutex_lock(&mutex);
+        pthread_mutex_lock(&counter_mutex);
         (*counter)++;
-        pthread_mutex_unlock(&mutex);
+        pthread_mutex_unlock(&counter_mutex);
     }
     
     return NULL;

@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../../include/shared_memory/shared_memory.h"
+#include "../../../include/shared_memory/shared_memory.h"
 
 int* counter = NULL;
 

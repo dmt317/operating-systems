@@ -5,10 +5,11 @@ project(cross_platform_logger)
 set(MAIN_FILE src/core/main.c)
 
 set(COMMON_FILES
-    src/common/threads.c
-    src/common/write_log.c
-    src/common/shared_memory.c
-    src/common/is_leader.c
+    src/common/threads/threads.c
+    src/common/utils/write_log.c
+    src/common/shared_memory/shared_memory.c
+    src/common/utils/is_leader.c
+    src/common/utils/mutex.c
 )
 
 if (WIN32)
@@ -29,8 +30,9 @@ elseif (UNIX)
         src/platform/posix/threads/log_status_posix.c
         src/platform/posix/threads/run_copies_posix.c
         src/platform/posix/utils/write_log_posix.c
-        src/platform/posix/shared_memory/shared_memory_posix.c
+        src/platform/posix/utils/mutex_posix.c
         src/platform/posix/utils/is_leader_posix.c
+        src/platform/posix/shared_memory/shared_memory_posix.c
     )
 endif()
 

@@ -8,26 +8,25 @@
 
 #include "../../../../include/threads/run_copies.h"
 #include "../../../../include/utils/write_log.h"
+#include "../../../../include/utils/mutex.h"
 #include "../../../../include/shared_memory/shared_memory.h"
 
 #define LOG_FILE_PATH "../cross_platform_logger/logs/log.txt"
 
-extern pthread_mutex_t mutex;
-extern pthread_mutex_t stop_mutex;
 extern int stop;
 
 void copy1_function_posix(void) {
     char log_msg[64];
     
-    pthread_mutex_lock(&mutex);
     snprintf(log_msg, sizeof(log_msg), "Child1 started:");
     write_log(log_msg);
     
+    pthread_mutex_lock(&counter_mutex);
     *counter += 10;
+    pthread_mutex_unlock(&counter_mutex);
     
     snprintf(log_msg, sizeof(log_msg), "Child1 finished:");
     write_log(log_msg);
-    pthread_mutex_unlock(&mutex);
 }
 
 void copy2_function_posix(void) {
@@ -36,15 +35,15 @@ void copy2_function_posix(void) {
     snprintf(log_msg, sizeof(log_msg), "Child2 started:");
     write_log(log_msg);
     
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&counter_mutex);
     *counter = *counter << 1;
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&counter_mutex);
     
     usleep(2000000);
     
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&counter_mutex);
     *counter = *counter >> 1;
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&counter_mutex);
     
     snprintf(log_msg, sizeof(log_msg), "Child2 finished:");
     write_log(log_msg);

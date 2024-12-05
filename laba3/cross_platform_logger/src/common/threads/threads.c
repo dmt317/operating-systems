@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../include/threads/threads.h"
+#include "../../../include/threads/threads.h"
 
 #define LEADER_THREADS 4
 #define PARTICIPANT_THREADS 2

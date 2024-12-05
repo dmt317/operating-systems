@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "../../../../include/threads/threads.h"
+#include "../../../../include/utils/mutex.h"
 
 #define LEADER_THREADS 4
 #define PARTICIPANT_THREADS 2
@@ -14,8 +15,6 @@ extern void* log_status_posix(void* arg);
 extern void* run_copies_posix(void* arg);
 
 typedef void* (*ThreadFunc)(void*);
-
-extern pthread_mutex_t mutex;
 
 pthread_t* create_threads_posix(int is_leader) {
     int num_threads = is_leader ? LEADER_THREADS : PARTICIPANT_THREADS;
@@ -65,5 +64,5 @@ void stop_threads_posix(pthread_t* threads, int is_leader) {
   
     printf("All threads stopped for %s.\n", is_leader ? "leader" : "participant");
     
-    pthread_mutex_destroy(&mutex);
+    cleanup_mutex();
 }

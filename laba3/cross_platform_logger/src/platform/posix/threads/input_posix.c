@@ -8,9 +8,8 @@
 #include <string.h>
 
 #include "../../../../include/shared_memory/shared_memory.h"
+#include "../../../../include/utils/mutex.h"
 
-extern pthread_mutex_t mutex;
-extern pthread_mutex_t stop_mutex;
 extern int stop;
 
 void* input_posix(void* arg) {
@@ -21,7 +20,6 @@ void* input_posix(void* arg) {
         pthread_mutex_lock(&stop_mutex);
         if (stop) {
             pthread_mutex_unlock(&stop_mutex);
-            printf("Time is up! Input thread exiting...\n");
             return NULL;
         }
         pthread_mutex_unlock(&stop_mutex);
@@ -56,9 +54,9 @@ void* input_posix(void* arg) {
                     int input = atoi(buffer);
                     printf("You entered: %d\n", input);
 
-                    pthread_mutex_lock(&mutex);
+                    pthread_mutex_lock(&counter_mutex);
                     *counter = input;
-                    pthread_mutex_unlock(&mutex);
+                    pthread_mutex_unlock(&counter_mutex);
                 }
             } else {
                 printf("Error reading input\n");

@@ -1,4 +1,4 @@
-#include "../../include/utils/write_log.h"
+#include "../../../include/utils/write_log.h"
 
 void write_log(const char* message) {
     #ifdef _WIN32
