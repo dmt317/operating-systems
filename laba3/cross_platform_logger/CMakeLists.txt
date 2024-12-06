@@ -20,6 +20,8 @@ if (WIN32)
         src/platform/windows/threads/log_status_windows.c
         src/platform/windows/threads/run_copies_windows.c
         src/platform/windows/utils/write_log_windows.c
+        src/platform/windows/utils/mutex_windows.c
+        src/platform/windows/utils/is_leader_windows.c
         src/platform/windows/shared_memory/shared_memory_windows.c
     )
 elseif (UNIX)
