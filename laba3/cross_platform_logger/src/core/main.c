@@ -58,7 +58,7 @@ int main() {
         
         close_shared_memory(name, size);
         
-        cleanup_lock_file_posix();
+        cleanup_lock_file();
     }
     else {
         if (connect_to_shared_memory(name, size) == -1) {
