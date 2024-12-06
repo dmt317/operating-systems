@@ -2,18 +2,22 @@
 
 #define THREADS_H
 
-#include <pthread.h>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <pthread.h>
+#endif
 
 void create_threads(int is_leader);
 #ifdef _WIN32
-    DWORD WINAPI create_threads_windows(LPVOID arg);
+    HANDLE* create_threads_windows(int is_leader);
 #else
     pthread_t* create_threads_posix(int is_leader);
 #endif
 
 void stop_threads(int is_leader);
 #ifdef _WIN32
-    void stop_threads_windows(void);
+    void stop_threads_windows(HANDLE* threads, int is_leader);
 #else
     void stop_threads_posix(pthread_t* threads, int is_leader);
 #endif

@@ -40,9 +40,17 @@ int main() {
             usleep(10000000);
         #endif
         
-        pthread_mutex_lock(&stop_mutex);
+        #ifdef _WIN32
+            WaitForSingleObject(hStopMutex, INFINITE);
+        #else
+            pthread_mutex_lock(&stop_mutex);
+        #endif
         stop = 1;
-        pthread_mutex_unlock(&stop_mutex);
+        #ifdef _WIN32
+            ReleaseMutex(hStopMutex);
+        #else
+            pthread_mutex_unlock(&stop_mutex);
+        #endif
         
         printf("Time is up!\n");
                 

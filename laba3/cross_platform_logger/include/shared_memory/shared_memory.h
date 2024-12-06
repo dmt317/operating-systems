@@ -15,7 +15,7 @@ void create_shared_memory(const char *name, size_t size);
 
 void close_shared_memory(const char *name, size_t size);
 #ifdef _WIN32
-    void close_shared_memory_windows(const char *name, size_t size);
+    void close_shared_memory_windows(int *counter, const char *name, size_t size);
 #else
     void close_shared_memory_posix(int *counter, const char *name, size_t size);
 #endif

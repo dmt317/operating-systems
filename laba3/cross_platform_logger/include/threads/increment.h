@@ -3,6 +3,7 @@
 #define INCREMENT_H
 
 #ifdef _WIN32
+    #include <windows.h>
     DWORD WINAPI increment_windows(LPVOID arg);
 #else
     void* increment_posix(void* arg);

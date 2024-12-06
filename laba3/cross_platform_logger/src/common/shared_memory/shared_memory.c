@@ -35,7 +35,7 @@ int connect_to_shared_memory(const char *name, size_t size) {
 
 void detach_shared_memory(void) {
     #ifdef _WIN32
-        detach_shared_memory_windows();
+        detach_shared_memory_windows(counter);
     #else
         detach_shared_memory_posix(counter);
     #endif
