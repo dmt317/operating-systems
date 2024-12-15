@@ -9,6 +9,7 @@
     #include <pthread.h>
     pthread_mutex_t counter_mutex; 
     pthread_mutex_t stop_mutex; 
+    pthread_mutex_t console_mutex;
 #endif
 
 void initialize_mutex(void);

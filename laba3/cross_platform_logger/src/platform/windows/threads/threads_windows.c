@@ -5,13 +5,14 @@
 #include "../../../../include/threads/threads.h"
 #include "../../../../include/utils/mutex.h"
 
-#define LEADER_THREADS 4
-#define PARTICIPANT_THREADS 2
+#define LEADER_THREADS 5
+#define PARTICIPANT_THREADS 3
 
 extern DWORD WINAPI increment_windows(LPVOID arg);
 extern DWORD WINAPI input_windows(LPVOID arg);
 extern DWORD WINAPI log_status_windows(LPVOID arg);
 extern DWORD WINAPI run_copies_windows(LPVOID arg);
+extern DWORD WINAPI stop_exection_windows(LPVOID arg);
 
 typedef DWORD(WINAPI* ThreadFunc)(LPVOID);
 
@@ -27,12 +28,14 @@ HANDLE* create_threads_windows(int is_leader) {
         increment_windows,
         input_windows,
         log_status_windows,
-        run_copies_windows
+        run_copies_windows,
+        stop_exection_windows
     };
 
     ThreadFunc participant_functions[PARTICIPANT_THREADS] = {
         increment_windows,
-        input_windows
+        input_windows,
+        log_status_windows
     };
 
     ThreadFunc* functions = is_leader ? leader_functions : participant_functions;

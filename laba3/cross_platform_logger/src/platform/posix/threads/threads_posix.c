@@ -6,13 +6,14 @@
 #include "../../../../include/threads/threads.h"
 #include "../../../../include/utils/mutex.h"
 
-#define LEADER_THREADS 4
-#define PARTICIPANT_THREADS 2
+#define LEADER_THREADS 5
+#define PARTICIPANT_THREADS 3
 
 extern void* increment_posix(void* arg);
 extern void* input_posix(void* arg);
 extern void* log_status_posix(void* arg);
 extern void* run_copies_posix(void* arg);
+extern void* stop_execution_posix(void* arg);
 
 typedef void* (*ThreadFunc)(void*);
 
@@ -28,12 +29,14 @@ pthread_t* create_threads_posix(int is_leader) {
         increment_posix,
         input_posix,
         log_status_posix,
-        run_copies_posix
+        run_copies_posix,
+        stop_execution_posix
     };
     
     ThreadFunc participant_functions[PARTICIPANT_THREADS] = {
         increment_posix,
-        input_posix
+        input_posix,
+        stop_execution_posix
     };
     
     ThreadFunc* functions = is_leader ? leader_functions : participant_functions;
@@ -56,7 +59,7 @@ pthread_t* create_threads_posix(int is_leader) {
 void stop_threads_posix(pthread_t* threads, int is_leader) {
     int num_threads = is_leader ? LEADER_THREADS : PARTICIPANT_THREADS;
     
-    for (int i = 0; i < is_leader; i++) {
+    for (int i = 0; i < num_threads; i++) {
         if (pthread_join(threads[i], NULL) != 0) {
             perror("Failed to join thread");
         }

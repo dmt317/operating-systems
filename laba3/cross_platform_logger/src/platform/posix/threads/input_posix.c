@@ -9,6 +9,7 @@
 
 #include "../../../../include/shared_memory/shared_memory.h"
 #include "../../../../include/utils/mutex.h"
+#include "../../../../include/threads/stop_execution.h"
 
 extern int stop;
 
@@ -24,6 +25,14 @@ void* input_posix(void* arg) {
         }
         pthread_mutex_unlock(&stop_mutex);
 
+        pthread_mutex_lock(&console_mutex);
+        if (console_blocked) {
+            pthread_mutex_unlock(&console_mutex);
+            usleep(100000);
+            continue;
+        }
+        pthread_mutex_unlock(&console_mutex);
+       
         fd_set readfds;
         struct timeval timeout;
 
@@ -33,6 +42,7 @@ void* input_posix(void* arg) {
         timeout.tv_sec = 1; 
         timeout.tv_usec = 0;
 
+        pthread_mutex_lock(&console_mutex);
         int result = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
 
         if (result > 0 && FD_ISSET(STDIN_FILENO, &readfds)) {
@@ -67,7 +77,7 @@ void* input_posix(void* arg) {
         } else {
             perror("\nselect failed");
         }
+        pthread_mutex_unlock(&console_mutex);
     }
-
     return NULL;
 }

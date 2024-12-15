@@ -19,6 +19,7 @@ if (WIN32)
         src/platform/windows/threads/input_windows.c
         src/platform/windows/threads/log_status_windows.c
         src/platform/windows/threads/run_copies_windows.c
+        src/platform/windows/threads/stop_execution_windows.c
         src/platform/windows/utils/write_log_windows.c
         src/platform/windows/utils/mutex_windows.c
         src/platform/windows/utils/is_leader_windows.c
@@ -31,6 +32,7 @@ elseif (UNIX)
         src/platform/posix/threads/input_posix.c
         src/platform/posix/threads/log_status_posix.c
         src/platform/posix/threads/run_copies_posix.c
+        src/platform/posix/threads/stop_execution_posix.c
         src/platform/posix/utils/write_log_posix.c
         src/platform/posix/utils/mutex_posix.c
         src/platform/posix/utils/is_leader_posix.c

@@ -26,39 +26,24 @@ int main() {
             fprintf(stderr, "Failed to initialize shared memory.\n");
             return EXIT_FAILURE;
         }
-        
+
         char start[] = "Leader started,";
-            
+
         write_log(start);
-            
+
         create_threads(leader);
-            
-        // для демонстрации ограничиваем время работы программы на 10 секунд
-        #ifdef _WIN32
-            Sleep(10000);
-        #else
-            usleep(10000000);
-        #endif
-        
-        #ifdef _WIN32
-            WaitForSingleObject(hStopMutex, INFINITE);
-        #else
+
+        while (1) {
             pthread_mutex_lock(&stop_mutex);
-        #endif
-        stop = 1;
-        #ifdef _WIN32
-            ReleaseMutex(hStopMutex);
-        #else
-            pthread_mutex_unlock(&stop_mutex);
-        #endif
-        
-        printf("Time is up!\n");
-                
-        stop_threads(leader);
-        
-        close_shared_memory(name, size);
-        
-        cleanup_lock_file();
+            if (stop) {
+                stop_threads(leader);
+                close_shared_memory(name, size);
+                cleanup_lock_file();
+                pthread_mutex_unlock(&stop_mutex);
+                return 0;
+            }
+        }
+        pthread_mutex_unlock(&stop_mutex);
     }
     else {
         if (connect_to_shared_memory(name, size) == -1) {
@@ -67,21 +52,18 @@ int main() {
         }
         
         create_threads(leader);
-        
-        while (!stop) {
-            #ifdef _WIN32
-                Sleep(100);
-            #else
-                usleep(100000);
-            #endif
+
+        while (1) {
+            pthread_mutex_lock(&stop_mutex);
+            if (stop) {
+                stop_threads(leader);
+                detach_shared_memory();
+                printf("Participant finished.");
+                pthread_mutex_unlock(&stop_mutex);
+                return 0;
+            }
         }
-        
-        stop_threads(leader);
-        
-        detach_shared_memory();
-        
-        printf("Participant finished.");
+        pthread_mutex_unlock(&stop_mutex);
     }
-    
     return 0;
 }

@@ -3,8 +3,8 @@
 
 #include "../../../include/threads/threads.h"
 
-#define LEADER_THREADS 4
-#define PARTICIPANT_THREADS 2
+#define LEADER_THREADS 5
+#define PARTICIPANT_THREADS 3
 
 #ifdef _WIN32
     #include <windows.h>
