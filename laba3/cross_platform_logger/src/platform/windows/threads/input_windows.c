@@ -6,6 +6,7 @@
 
 #include "../../../../include/shared_memory/shared_memory.h"
 #include "../../../../include/utils/mutex.h"
+#include "../../../../include/threads/stop_execution.h"
 
 extern int stop;
 

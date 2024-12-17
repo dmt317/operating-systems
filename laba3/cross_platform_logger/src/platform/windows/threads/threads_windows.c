@@ -12,7 +12,7 @@ extern DWORD WINAPI increment_windows(LPVOID arg);
 extern DWORD WINAPI input_windows(LPVOID arg);
 extern DWORD WINAPI log_status_windows(LPVOID arg);
 extern DWORD WINAPI run_copies_windows(LPVOID arg);
-extern DWORD WINAPI stop_exection_windows(LPVOID arg);
+extern DWORD WINAPI stop_execution_windows(LPVOID arg);
 
 typedef DWORD(WINAPI* ThreadFunc)(LPVOID);
 
@@ -29,13 +29,13 @@ HANDLE* create_threads_windows(int is_leader) {
         input_windows,
         log_status_windows,
         run_copies_windows,
-        stop_exection_windows
+        stop_execution_windows
     };
 
     ThreadFunc participant_functions[PARTICIPANT_THREADS] = {
         increment_windows,
         input_windows,
-        stop_exection_windows
+        stop_execution_windows
     };
 
     ThreadFunc* functions = is_leader ? leader_functions : participant_functions;

@@ -12,6 +12,12 @@ extern int stop;
 int console_blocked = 0;
 
 DWORD WINAPI stop_execution_windows(LPVOID arg) {
+    HANDLE hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
+    if (hConsoleInput == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Error: Unable to get console input handle.\n");
+        return 1;
+    }
+
     while (1) {
         WaitForSingleObject(hStopMutex, INFINITE);
         if (stop) {
