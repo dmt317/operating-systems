@@ -34,36 +34,60 @@ int main() {
         create_threads(leader);
 
         while (1) {
-            pthread_mutex_lock(&stop_mutex);
+            #ifdef _WIN32
+                WaitForSingleObject(hStopMutex, INFINITE);
+            #else
+                pthread_mutex_lock(&stop_mutex);
+            #endif
             if (stop) {
                 stop_threads(leader);
                 close_shared_memory(name, size);
                 cleanup_lock_file();
-                pthread_mutex_unlock(&stop_mutex);
+                #ifdef _WIN32
+                    ReleaseMutex(hStopMutex);
+                #else
+                    pthread_mutex_unlock(&stop_mutex);
+                #endif
                 return 0;
             }
         }
-        pthread_mutex_unlock(&stop_mutex);
+        #ifdef _WIN32
+            ReleaseMutex(hStopMutex);
+        #else
+            pthread_mutex_unlock(&stop_mutex);
+        #endif
     }
     else {
         if (connect_to_shared_memory(name, size) == -1) {
             fprintf(stderr, "Failed to connect to shared memory.\n");
             return EXIT_FAILURE;
         }
-        
+
         create_threads(leader);
 
         while (1) {
-            pthread_mutex_lock(&stop_mutex);
+            #ifdef _WIN32
+                WaitForSingleObject(hStopMutex, INFINITE);
+            #else
+                pthread_mutex_lock(&stop_mutex);
+            #endif
             if (stop) {
                 stop_threads(leader);
                 detach_shared_memory();
                 printf("Participant finished.");
-                pthread_mutex_unlock(&stop_mutex);
+                #ifdef _WIN32
+                    ReleaseMutex(hStopMutex);
+                #else
+                    pthread_mutex_unlock(&stop_mutex);
+                #endif
                 return 0;
             }
         }
-        pthread_mutex_unlock(&stop_mutex);
+        #ifdef _WIN32
+            ReleaseMutex(hStopMutex);
+        #else
+            pthread_mutex_unlock(&stop_mutex);
+        #endif
     }
     return 0;
 }

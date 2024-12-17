@@ -33,6 +33,15 @@ DWORD WINAPI input_windows(LPVOID arg) {
         }
         ReleaseMutex(hStopMutex);
 
+        WaitForSingleObject(hConsoleMutex, INFINITE);
+        if (console_blocked) {
+            ReleaseMutex(hConsoleMutex);
+            Sleep(100);
+            continue;
+        }
+        ReleaseMutex(hConsoleMutex);
+
+        WaitForSingleObject(hConsoleMutex, INFINITE);
         DWORD events;
         if (GetNumberOfConsoleInputEvents(hStdin, &events) && events > 0) {
             INPUT_RECORD inputRecord;
@@ -72,9 +81,9 @@ DWORD WINAPI input_windows(LPVOID arg) {
             printf("\rWaiting for input...\n");
             Sleep(1000);
         }
+        ReleaseMutex(hConsoleMutex);
     }
-
     SetConsoleMode(hStdin, originalMode);
-    
+
     return 0;
 }

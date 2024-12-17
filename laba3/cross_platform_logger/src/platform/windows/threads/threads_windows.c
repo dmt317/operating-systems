@@ -35,7 +35,7 @@ HANDLE* create_threads_windows(int is_leader) {
     ThreadFunc participant_functions[PARTICIPANT_THREADS] = {
         increment_windows,
         input_windows,
-        log_status_windows
+        stop_exection_windows
     };
 
     ThreadFunc* functions = is_leader ? leader_functions : participant_functions;

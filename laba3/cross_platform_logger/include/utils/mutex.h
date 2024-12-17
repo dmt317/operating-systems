@@ -5,6 +5,7 @@
     #include <windows.h>
     extern HANDLE hCounterMutex;
     extern HANDLE hStopMutex;
+    extern HANDLE hConsoleMutex;
 #else
     #include <pthread.h>
     pthread_mutex_t counter_mutex; 
