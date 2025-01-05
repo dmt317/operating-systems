@@ -3,8 +3,7 @@
 mkdir build
 cd build
 
-cmake ../device_simulation_tool
-
+cmake ../temperature_logger
 cmake --build .
 
-./device_simulation_tool
+./temperature_logger

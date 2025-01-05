@@ -1,19 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef _WIN32
     #include <windows.h>
 #else
+    #include <unistd.h>
     #include <fcntl.h>
     #include <termios.h>
+    #include <signal.h>
 #endif
 
 #define PORT_NAME "COM3"
-#define DEVICE_PATH "/dev/ttys000"
+#define DEVICE_PATH "/dev/ttys004"
 #define SLEEP_INTERVAL 1
+
+volatile int running = 1;
+
+void signal_handler(int signum) {
+    printf("\nCaught signal %d. Cleaning up...\n", signum);
+    running = 0;
+}
 
 float generate_temperature() {
     return (rand() % 8001 - 3000) / 100.0;
@@ -44,19 +52,20 @@ int init_port(const char *port_name) {
         perror("Failed to open serial port");
         return -1;
     }
-    struct termios tty = {0};
-    if (tcgetattr(fd, &tty) != 0) {
+    struct termios options = {0};
+    if (tcgetattr(fd, &options) != 0) {
         perror("Failed to get attributes");
         close(fd);
         return -1;
     }
-    cfsetospeed(&tty, B9600);
-    cfsetispeed(&tty, B9600);
-    tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
-    tty.c_cflag |= CLOCAL | CREAD;
-    tty.c_cflag &= ~(PARENB | PARODD);
-    tty.c_cflag &= ~CSTOPB;
-    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
+    cfsetospeed(&options, B9600);
+    cfsetispeed(&options, B9600);
+
+    options.c_cflag = (options.c_cflag & ~CSIZE) | CS8;
+    options.c_cflag |= CLOCAL | CREAD;
+    options.c_cflag &= ~(PARENB | PARODD);
+    options.c_cflag &= ~CSTOPB;
+    if (tcsetattr(fd, TCSANOW, &options) != 0) {
         perror("Failed to set attributes");
         close(fd);
         return -1;
@@ -81,6 +90,15 @@ void send_temperature(int port) {
 int main() {
     srand(time(NULL));
 
+    struct sigaction sa;
+    sa.sa_handler = signal_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("Error setting signal handler");
+        exit(EXIT_FAILURE);
+    }
+
     const char *port_name =
     #ifdef _WIN32
         PORT_NAME;
@@ -95,7 +113,7 @@ int main() {
 
     printf("Device simulator started. Sending data to %s...\n", port_name);
 
-    while (1) {
+    while (running) {
         send_temperature(port);
         #ifdef _WIN32
             Sleep(SLEEP_INTERVAL * 1000);
@@ -109,6 +127,7 @@ int main() {
     #else
         close(port);
     #endif
+    printf("Device simulator ended.\n");
 
     return EXIT_SUCCESS;
 }

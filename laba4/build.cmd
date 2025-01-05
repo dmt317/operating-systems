@@ -1,6 +1,6 @@
 @echo off
 
-cd device_simulation_tool
+cd temperature_logger
 
 mkdir build
 cd build
@@ -9,4 +9,4 @@ cmake -G "MinGW Makefiles" ..
 
 cmake --build .
 
-device_simulation_tool.exe
+temperature_logger.exe

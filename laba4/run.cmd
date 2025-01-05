@@ -1,0 +1,1 @@
+.\build_device_simulator.cmd & .\build.cmd
