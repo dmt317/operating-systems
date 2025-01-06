@@ -13,7 +13,7 @@
 #endif
 
 #define PORT_NAME "COM3"
-#define DEVICE_PATH "/dev/ttys004"
+#define DEVICE_PATH "/dev/ttys002"
 #define SLEEP_INTERVAL 1
 
 volatile int running = 1;

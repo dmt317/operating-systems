@@ -62,6 +62,7 @@ int main() {
             avg_temp_hour += temp;
             if (((current_time - start_time) % HOUR == 0) && (current_time != start_time)) {
                 avg_temp_hour /= HOUR;
+                printf("Average hourly: %.2f\n", avg_temp_hour);
 
                 char hourly_log_message[128];
                 snprintf(hourly_log_message, sizeof(hourly_log_message), "[%s] Average hourly: %.2f", timestamp, avg_temp_hour);
@@ -73,19 +74,20 @@ int main() {
             if (((current_time - start_time) % DAY == 0) && (current_time != start_time)) {
                 day_count++;
                 avg_temp_day /= DAY;
+                printf("Average daily: %.2f\n", avg_temp_day);
 
                 char daily_log_message[128];
-                snprintf(daily_log_message, sizeof(daily_log_message), "[%s] Average daily: %.2f", timestamp, avg_temp_hour);
+                snprintf(daily_log_message, sizeof(daily_log_message), "[%s] Average daily: %.2f", timestamp, avg_temp_day);
                 write_log(DAILY_LOG_PATH, daily_log_message);
 
                 cleanup_log_file(TEMPERATURE_LOG_PATH);
             }
 
-            if ((day_count % days_in_month(month, year)) == 0) {
+            if ((day_count % days_in_month(month, year)) == 0 && day_count != 0) {
                 cleanup_log_file(HOURLY_LOG_PATH);
             }
 
-            if ((day_count % (is_leap_year(year) ? 366 : 365)) == 0) {
+            if ((day_count % (is_leap_year(year) ? 366 : 365)) == 0 && day_count != 0) {
                 cleanup_log_file(DAILY_LOG_PATH);
             }
         }
