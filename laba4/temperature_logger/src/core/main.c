@@ -16,19 +16,36 @@
 
 volatile int running = 1;
 
-void signal_handler(int signum) {
-    running = 0;
-}
+#if _WIN32
+    BOOL WINAPI signal_handler(DWORD signal) {
+        if (signal == CTRL_C_EVENT) {
+            running = 0;
+            return TRUE;
+        }
+        return FALSE;
+    }
+#else
+    void signal_handler(int signum) {
+        running = 0;
+    }
+#endif
 
 int main() {
-    struct sigaction end_action;
-    end_action.sa_handler = signal_handler;
-    sigemptyset(&end_action.sa_mask);
-    end_action.sa_flags = 0;
-    if (sigaction(SIGINT, &end_action, NULL) == -1) {
-        perror("Error setting signal handler");
-        exit(EXIT_FAILURE);
-    }
+    #if _WIN32
+        if (!SetConsoleCtrlHandler(signal_handler, TRUE)) {
+            fprintf(stderr, "Error setting signal handler.\n");
+            return EXIT_FAILURE;
+        }
+    #else
+        struct sigaction end_action;
+        end_action.sa_handler = signal_handler;
+        sigemptyset(&end_action.sa_mask);
+        end_action.sa_flags = 0;
+        if (sigaction(SIGINT, &end_action, NULL) == -1) {
+            perror("Error setting signal handler");
+            exit(EXIT_FAILURE);
+        }
+    #endif
 
     float temp;
     float avg_temp_hour = 0.0;
@@ -41,13 +58,22 @@ int main() {
     int month = local_time->tm_mon + 1;
     int year = local_time->tm_year + 1900;
 
-    int fd = init_port_posix();
+    #if _WIN32
+        HANDLE hComm = init_port_windows();
+    #else
+        int fd = init_port_posix();
+    #endif
 
     printf("Starting temperature logger\n");
 
     if (fd != -1) {
         while (running) {
-            temp = read_from_port_posix(fd);
+            #if _WIN32
+                temp = read_from_port_windows(hComm);
+            #else
+                temp = read_from_port_posix(fd);
+            #endif
+
             if (!running) break;
             printf("Read: %.2f\n", temp);
 
@@ -86,7 +112,6 @@ int main() {
                 remove_oldest_record(TEMPERATURE_LOG_PATH);
             }
 
-
             if ((day_count > days_in_month(month, year)) && day_count != 0) {
                 remove_oldest_record(HOURLY_LOG_PATH);
             }
@@ -97,7 +122,11 @@ int main() {
         }
     }
 
-    close(fd);
+    #if _WIN32
+        CloseHandle(hComm);
+    #else
+        close(fd);
+    #endif
 
     printf("Temperature logger ended\n");
 

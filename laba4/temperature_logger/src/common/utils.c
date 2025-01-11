@@ -51,11 +51,11 @@ void remove_oldest_record(const char *log_file_path) {
     fclose(temp_file);
 
     if (remove(log_file_path) != 0) {
-        perror("Ошибка удаления исходного файла");
+        perror("Error deleting log_file");
         return;
     }
     if (rename("temp.txt", log_file_path) != 0) {
-        perror("Ошибка переименования временного файла");
+        perror("Error renaming temp.txt");
         return;
     }
 }

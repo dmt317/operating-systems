@@ -18,10 +18,21 @@
 
 volatile int running = 1;
 
-void signal_handler(int signum) {
-    printf("\nCaught signal %d. Cleaning up...\n", signum);
-    running = 0;
-}
+#if _WIN32
+    BOOL WINAPI signal_handler(DWORD signal) {
+        if (signal == CTRL_C_EVENT) {
+            printf("\nCaught signal %d. Cleaning up...\n", signal);
+            running = 0;
+            return TRUE;
+        }
+        return FALSE;
+    }
+#else
+    void signal_handler(int signum) {
+        printf("\nCaught signal %d. Cleaning up...\n", signum);
+        running = 0;
+    }
+#endif
 
 float generate_temperature() {
     return (rand() % 8001 - 3000) / 100.0;
@@ -90,14 +101,21 @@ void send_temperature(int port) {
 int main() {
     srand(time(NULL));
 
-    struct sigaction sa;
-    sa.sa_handler = signal_handler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    if (sigaction(SIGINT, &sa, NULL) == -1) {
-        perror("Error setting signal handler");
-        exit(EXIT_FAILURE);
-    }
+    #if _WIN32
+        if (!SetConsoleCtrlHandler(signal_handler, TRUE)) {
+            fprintf(stderr, "Error setting signal handler.\n");
+            return EXIT_FAILURE;
+        }
+    #else
+        struct sigaction sa;
+        sa.sa_handler = signal_handler;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = 0;
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("Error setting signal handler");
+            exit(EXIT_FAILURE);
+        }
+    #endif
 
     const char *port_name =
     #ifdef _WIN32

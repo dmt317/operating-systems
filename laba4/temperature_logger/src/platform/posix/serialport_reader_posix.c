@@ -5,6 +5,8 @@
 #include <termios.h>
 #include <string.h>
 
+#include "../../../include/serialport_reader.h"
+
 #define PORT_NAME "/dev/ttys003"
 
 int init_port_posix() {
