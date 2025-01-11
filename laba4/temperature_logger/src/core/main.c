@@ -104,7 +104,7 @@ int main() {
                 avg_temp_hour /= HOUR;
                 printf("Average hourly: %.2f\n", avg_temp_hour);
 
-                if ((day_count > days_in_month(month, year)) && day_count != 0) {
+                if (day_count > days_in_month(month, year)) {
                     remove_oldest_record(HOURLY_LOG_PATH);
                 }
 
@@ -120,7 +120,7 @@ int main() {
                 avg_temp_day /= DAY;
                 printf("Average daily: %.2f\n", avg_temp_day);
 
-                if ((day_count > (is_leap_year(year) ? 366 : 365)) && day_count != 0) {
+                if (day_count > (is_leap_year(year) ? 366 : 365)) {
                     remove_oldest_record(DAILY_LOG_PATH);
                 }
 
