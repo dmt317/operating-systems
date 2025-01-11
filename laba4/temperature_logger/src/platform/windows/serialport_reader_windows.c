@@ -62,7 +62,7 @@ float read_from_port_windows(HANDLE hComm) {
 
     if (!ReadFile(hComm, buffer, sizeof(buffer) - 1, &bytesRead, NULL)) {
         fprintf(stderr, "Failed to read from serial port. Error: %ld\n", GetLastError());
-        return -1.0f;
+        return -1.0;
     }
 
     if (bytesRead > 0) {
@@ -71,8 +71,8 @@ float read_from_port_windows(HANDLE hComm) {
         return result;
     } else if (bytesRead == 0) {
         Sleep(100);
-        return 0.0f;
+        return 0.0;
     }
 
-    return -1.0f;
+    return -1.0;
 }

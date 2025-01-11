@@ -79,7 +79,7 @@ int main() {
 
             char timestamp[64];
             time_t current_time = time(NULL);
-            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", localtime(&current_time));
+            get_timestamp(timestamp, sizeof(timestamp), current_time);
 
             char log_message[128];
             snprintf(log_message, sizeof(log_message), "[%s] Temperature: %.2f", timestamp, temp);
