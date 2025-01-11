@@ -21,8 +21,8 @@
     #define DAILY_LOG_PATH "../temperature_logger/logs/avg_temperature_day.log"
 #endif
 #define SLEEP_INTERVAL 1
-#define HOUR 5
-#define DAY 10
+#define HOUR 3600
+#define DAY 86400
 
 volatile int running = 1;
 
@@ -61,7 +61,7 @@ int main() {
     float avg_temp_hour = 0.0;
     float avg_temp_day = 0.0;
 
-    int day_count = 25;
+    int day_count = 0;
 
     time_t start_time = time(NULL);
     struct tm *local_time = localtime(&start_time);
