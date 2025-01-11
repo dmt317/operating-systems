@@ -11,9 +11,15 @@
 #include "../../include/serialport_reader.h"
 #include "../../include/utils.h"
 
-#define TEMPERATURE_LOG_PATH "../temperature_logger/logs/temperature.log"
-#define HOURLY_LOG_PATH "../temperature_logger/logs/avg_temperature_hour.log"
-#define DAILY_LOG_PATH "../temperature_logger/logs/avg_temperature_day.log"
+#if _WIN32
+    #define TEMPERATURE_LOG_PATH "../logs/temperature.log"
+    #define HOURLY_LOG_PATH "../logs/avg_temperature_hour.log"
+    #define DAILY_LOG_PATH "../logs/avg_temperature_day.log"
+#else
+    #define TEMPERATURE_LOG_PATH "../temperature_logger/logs/temperature.log"
+    #define HOURLY_LOG_PATH "../temperature_logger/logs/avg_temperature_hour.log"
+    #define DAILY_LOG_PATH "../temperature_logger/logs/avg_temperature_day.log"
+#endif
 #define SLEEP_INTERVAL 1
 #define HOUR 3600
 #define DAY 86400

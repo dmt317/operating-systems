@@ -1,6 +1,6 @@
 @echo off
 
-cd device_simulation_tool
+cd device_simulator
 
 mkdir build_device_simulator
 cd build_device_simulator
