@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <time.h>
-#include <signal.h>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+    #include <signal.h>
+#endif
 
 #include "../../include/serialport_reader.h"
 #include "../../include/utils.h"
@@ -59,7 +63,7 @@ int main() {
     int year = local_time->tm_year + 1900;
 
     #if _WIN32
-        HANDLE hComm = init_port_windows();
+        HANDLE fd = init_port_windows();
     #else
         int fd = init_port_posix();
     #endif
@@ -123,7 +127,7 @@ int main() {
     }
 
     #if _WIN32
-        CloseHandle(hComm);
+        CloseHandle(fd);
     #else
         close(fd);
     #endif
