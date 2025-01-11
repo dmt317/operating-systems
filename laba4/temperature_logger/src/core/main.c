@@ -21,8 +21,8 @@
     #define DAILY_LOG_PATH "../temperature_logger/logs/avg_temperature_day.log"
 #endif
 #define SLEEP_INTERVAL 1
-#define HOUR 3600
-#define DAY 86400
+#define HOUR 5
+#define DAY 10
 
 volatile int running = 1;
 
@@ -61,7 +61,7 @@ int main() {
     float avg_temp_hour = 0.0;
     float avg_temp_day = 0.0;
 
-    int day_count = 0;
+    int day_count = 25;
 
     time_t start_time = time(NULL);
     struct tm *local_time = localtime(&start_time);
@@ -91,6 +91,10 @@ int main() {
             time_t current_time = time(NULL);
             get_timestamp(timestamp, sizeof(timestamp), current_time);
 
+            if ((current_time - start_time) > DAY) {
+                remove_oldest_record(TEMPERATURE_LOG_PATH);
+            }
+
             char log_message[128];
             snprintf(log_message, sizeof(log_message), "[%s] Temperature: %.2f", timestamp, temp);
             write_log(TEMPERATURE_LOG_PATH, log_message);
@@ -99,6 +103,10 @@ int main() {
             if (((current_time - start_time) % HOUR == 0) && (current_time != start_time)) {
                 avg_temp_hour /= HOUR;
                 printf("Average hourly: %.2f\n", avg_temp_hour);
+
+                if ((day_count > days_in_month(month, year)) && day_count != 0) {
+                    remove_oldest_record(HOURLY_LOG_PATH);
+                }
 
                 char hourly_log_message[128];
                 snprintf(hourly_log_message, sizeof(hourly_log_message), "[%s] Average hourly: %.2f", timestamp, avg_temp_hour);
@@ -112,22 +120,13 @@ int main() {
                 avg_temp_day /= DAY;
                 printf("Average daily: %.2f\n", avg_temp_day);
 
+                if ((day_count > (is_leap_year(year) ? 366 : 365)) && day_count != 0) {
+                    remove_oldest_record(DAILY_LOG_PATH);
+                }
+
                 char daily_log_message[128];
                 snprintf(daily_log_message, sizeof(daily_log_message), "[%s] Average daily: %.2f", timestamp, avg_temp_day);
                 write_log(DAILY_LOG_PATH, daily_log_message);
-
-            }
-
-            if ((current_time - start_time) > DAY) {
-                remove_oldest_record(TEMPERATURE_LOG_PATH);
-            }
-
-            if ((day_count > days_in_month(month, year)) && day_count != 0) {
-                remove_oldest_record(HOURLY_LOG_PATH);
-            }
-
-            if ((day_count > (is_leap_year(year) ? 366 : 365)) && day_count != 0) {
-                remove_oldest_record(DAILY_LOG_PATH);
             }
         }
     }
