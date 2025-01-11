@@ -80,15 +80,19 @@ int main() {
                 snprintf(daily_log_message, sizeof(daily_log_message), "[%s] Average daily: %.2f", timestamp, avg_temp_day);
                 write_log(DAILY_LOG_PATH, daily_log_message);
 
-                cleanup_log_file(TEMPERATURE_LOG_PATH);
             }
 
-            if ((day_count % days_in_month(month, year)) == 0 && day_count != 0) {
-                cleanup_log_file(HOURLY_LOG_PATH);
+            if ((current_time - start_time) > DAY) {
+                remove_oldest_record(TEMPERATURE_LOG_PATH);
             }
 
-            if ((day_count % (is_leap_year(year) ? 366 : 365)) == 0 && day_count != 0) {
-                cleanup_log_file(DAILY_LOG_PATH);
+
+            if ((day_count > days_in_month(month, year)) && day_count != 0) {
+                remove_oldest_record(HOURLY_LOG_PATH);
+            }
+
+            if ((day_count > (is_leap_year(year) ? 366 : 365)) && day_count != 0) {
+                remove_oldest_record(DAILY_LOG_PATH);
             }
         }
     }
