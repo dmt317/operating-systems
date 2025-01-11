@@ -73,7 +73,7 @@ int main() {
     if (fd != -1) {
         while (running) {
             #if _WIN32
-                temp = read_from_port_windows(hComm);
+                temp = read_from_port_windows(fd);
             #else
                 temp = read_from_port_posix(fd);
             #endif
