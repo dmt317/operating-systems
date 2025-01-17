@@ -6,11 +6,14 @@
 #else
     #include <unistd.h>
     #include <signal.h>
+    #include <pthread.h>
 #endif
 
 #include "serialport_reader.h"
 #include "utils.h"
 #include "database.h"
+#include "server.h"
+#include "globals.h"
 
 #define TEMPERATURE_TABLE "temperature"
 #define AVG_TEMPERATURE_HOUR_TABLE "avg_temperature_hour"
@@ -22,7 +25,7 @@
 
 #define DB_PATH "../database/temperature.db"
 
-volatile int running = 1;
+volatile sig_atomic_t running = 1;
 
 #if _WIN32
     BOOL WINAPI signal_handler(DWORD signal) {
@@ -63,6 +66,12 @@ int main() {
          return 1;
     }
 
+    pthread_t server_thread;
+    if (pthread_create(&server_thread, NULL, start_server, NULL) != 0) {
+         perror("Failed to create server thread");
+         return 1;
+    }
+
     double temp;
     double avg_temp_hour = 0.0;
     double avg_temp_day = 0.0;
@@ -80,8 +89,6 @@ int main() {
         int fd = init_port_posix();
     #endif
 
-    printf("Starting temperature logger\n");
-
     if (fd != -1) {
         while (running) {
             #if _WIN32
@@ -91,7 +98,6 @@ int main() {
             #endif
 
             if (!running) break;
-            printf("Read: %.2f\n", temp);
 
             char timestamp[64];
             time_t current_time = time(NULL);
@@ -106,7 +112,6 @@ int main() {
             avg_temp_hour += temp;
             if (((current_time - start_time) % HOUR == 0) && (current_time != start_time)) {
                 avg_temp_hour /= HOUR;
-                printf("Average hourly: %.2f\n", avg_temp_hour);
 
                 if (day_count > days_in_month(month, year)) {
                     delete_oldest_record(db, AVG_TEMPERATURE_HOUR_TABLE);
@@ -121,7 +126,6 @@ int main() {
                 day_count++;
                 avg_temp_day /= DAY;
                 timestamp[10] = '\0';
-                printf("Average daily: %.2f\n", avg_temp_day);
 
                 if (day_count > (is_leap_year(year) ? 366 : 365)) {
                     delete_oldest_record(db, AVG_TEMPERATURE_DAY_TABLE);
@@ -140,7 +144,10 @@ int main() {
 
     sqlite3_close(db);
 
-    printf("Temperature logger ended\n");
+    printf("Stopping server...\n");
 
+    pthread_join(server_thread, NULL);
+
+    printf("Server stopped. Exiting program.\n");
     return 0;
 }

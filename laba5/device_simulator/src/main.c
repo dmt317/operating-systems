@@ -90,10 +90,6 @@ int init_port(const char *port_name) {
 #endif
 }
 
-void send_temperature(int port) {
-
-}
-
 int main() {
     srand(time(NULL));
 
