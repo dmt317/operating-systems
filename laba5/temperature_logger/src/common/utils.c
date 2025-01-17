@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+
+#include "utils.h"
+
+#define MAX_LINE_LENGTH 256
+
+void get_timestamp(char *timestamp, size_t size, time_t current_time) {
+    #ifdef _WIN32
+        SYSTEMTIME st;
+        GetLocalTime(&st);
+
+        snprintf(timestamp, size, "%04d-%02d-%02d %02d:%02d:%02d",
+                 st.wYear, st.wMonth, st.wDay,
+                 st.wHour, st.wMinute, st.wSecond);
+    #else
+        struct tm *local_time = localtime(&current_time);
+        if (local_time != NULL) {
+            strftime(timestamp, size, "%Y-%m-%d %H:%M:%S", local_time);
+        } else {
+            snprintf(timestamp, size, "Error: Invalid time");
+        }
+    #endif
+}
+
+int is_leap_year(int year) {
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+        return 1;
+    }
+    return 0;
+}
+
+int days_in_month(int month, int year) {
+    int days_in_months[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (is_leap_year(year) && month == 2) {
+        return 29;
+    }
+
+    return days_in_months[month - 1];
+}
