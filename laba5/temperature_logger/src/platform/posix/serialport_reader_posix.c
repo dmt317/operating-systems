@@ -7,7 +7,7 @@
 
 #include "serialport_reader.h"
 
-#define PORT_NAME "/dev/ttys005"
+#define PORT_NAME "/dev/ttys008"
 
 int init_port_posix() {
     int fd = open(PORT_NAME, O_RDONLY | O_NOCTTY);

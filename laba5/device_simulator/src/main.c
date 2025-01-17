@@ -13,7 +13,7 @@
 #endif
 
 #define PORT_NAME "COM3"
-#define DEVICE_PATH "/dev/ttys004"
+#define DEVICE_PATH "/dev/ttys007"
 #define SLEEP_INTERVAL 1
 #define ALPHA 0.1 // Коэффициент сглаживания (0 < ALPHA ≤ 1)
 
