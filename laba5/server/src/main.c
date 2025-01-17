@@ -228,7 +228,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    printf("Server is running on port %d\n", PORT);
+    printf("Server is running at http://localhost:%d\n", PORT);
 
     while (running) {
         client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_len);
