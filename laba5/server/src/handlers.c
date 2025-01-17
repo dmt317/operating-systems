@@ -2,8 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cJSON.h"
-#include <unistd.h>
-#include <sys/socket.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <unistd.h>
+    #include <sys/socket.h>
+#endif
 
 #include "handlers.h"
 
@@ -88,7 +93,12 @@ void handle_average_temperature(int client_socket, sqlite3 *db, const char *tabl
 
     cJSON_Delete(json_array);
     free(json_string);
-    close(client_socket);
+    #ifdef _WIN32
+        closesocket(client_socket);
+    #else
+        close(client_socket);
+    #endif
+
 }
 
 void handle_current_temperature(int client_socket, sqlite3 *db) {

@@ -66,11 +66,23 @@ int main() {
          return 1;
     }
 
-    pthread_t server_thread;
-    if (pthread_create(&server_thread, NULL, start_server, NULL) != 0) {
-         perror("Failed to create server thread");
-         return 1;
-    }
+    #ifdef _WIN32
+        HANDLE server_thread;
+        DWORD thread_id;
+
+        server_thread = CreateThread(NULL, 0, start_server, NULL, 0, &thread_id);
+
+        if (server_thread == NULL) {
+            printf("Failed to create server thread. Error: %lu\n", GetLastError());
+            return -1;
+        }
+    #else
+        pthread_t server_thread;
+        if (pthread_create(&server_thread, NULL, start_server, NULL) != 0) {
+             perror("Failed to create server thread");
+             return 1;
+        }
+    #endif
 
     double temp;
     double avg_temp_hour = 0.0;
@@ -146,7 +158,13 @@ int main() {
 
     printf("Stopping server...\n");
 
-    pthread_join(server_thread, NULL);
+    #ifdef _WIN32
+        WaitForSingleObject(server_thread, INFINITE);
+
+        CloseHandle(server_thread);
+    #else
+        pthread_join(server_thread, NULL);
+    #endif
 
     printf("Server stopped. Exiting program.\n");
     return 0;

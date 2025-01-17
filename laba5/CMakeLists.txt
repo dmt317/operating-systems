@@ -42,3 +42,6 @@ endif()
 
 add_executable(temperature_logger ${TEMP_LOGGER_SOURCES})
 target_link_libraries(temperature_logger database server sqlite3 cJSON)
+if(WIN32)
+    target_link_libraries(temperature_logger ws2_32)
+endif ()

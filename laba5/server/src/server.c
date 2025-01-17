@@ -3,6 +3,8 @@
 #include <string.h>
 #ifdef _WIN32
     #include <windows.h>
+    #include <winsock2.h>
+    typedef int socklen_t;
 #else
     #include <unistd.h>
     #include <arpa/inet.h>
@@ -28,7 +30,11 @@ void handle_client(int client_socket) {
     }
 
     char buffer[BUFFER_SIZE];
-    read(client_socket, buffer, BUFFER_SIZE);
+    #ifdef _WIN32
+        recv(client_socket, buffer, BUFFER_SIZE, 0);
+    #else
+        read(client_socket, buffer, BUFFER_SIZE);
+    #endif
 
     printf("Request received: %s\n", buffer);
 
@@ -55,14 +61,30 @@ void handle_client(int client_socket) {
     sqlite3_close(db);
 }
 
-void* start_server(void *arg) {
+#ifdef _WIN32
+    DWORD WINAPI start_server(LPVOID arg)
+#else
+    void* start_server(void *arg)
+#endif
+{
     int server_socket, client_socket;
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
 
+    #ifdef _WIN32
+        WSADATA wsa;
+        if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+            fprintf(stderr, "WSAStartup failed. Error Code: %d\n", WSAGetLastError());
+            exit(EXIT_FAILURE);
+        }
+    #endif
+
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket < 0) {
         perror("Socket creation failed");
+        #ifdef _WIN32
+            WSACleanup();
+        #endif
         exit(EXIT_FAILURE);
     }
 
@@ -72,13 +94,23 @@ void* start_server(void *arg) {
 
     if (bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         perror("Bind failed");
-        close(server_socket);
+        #ifdef _WIN32
+            closesocket(server_socket);
+            WSACleanup();
+        #else
+            close(server_socket);
+        #endif
         exit(EXIT_FAILURE);
     }
 
     if (listen(server_socket, 10) < 0) {
         perror("Listen failed");
-        close(server_socket);
+        #ifdef _WIN32
+            closesocket(server_socket);
+            WSACleanup();
+        #else
+            close(server_socket);
+        #endif
         exit(EXIT_FAILURE);
     }
 
@@ -105,11 +137,20 @@ void* start_server(void *arg) {
             }
 
             handle_client(client_socket);
-            close(client_socket);
+            #ifdef _WIN32
+                closesocket(client_socket);
+            #else
+                close(client_socket);
+            #endif
         }
     }
 
-    close(server_socket);
+    #ifdef _WIN32
+        closesocket(server_socket);
+        WSACleanup();
+    #else
+        close(server_socket);
+    #endif
 
     return NULL;
 }
