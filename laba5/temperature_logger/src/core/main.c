@@ -114,23 +114,12 @@ int main() {
             char timestamp[64];
             time_t current_time = time(NULL);
             get_timestamp(timestamp, sizeof(timestamp), current_time);
-
-            if ((current_time - start_time) > DAY) {
-                delete_oldest_record(db, TEMPERATURE_TABLE);
-            }
-
             insert_db(db, TEMPERATURE_TABLE, timestamp, temp);
 
             avg_temp_hour += temp;
             if (((current_time - start_time) % HOUR == 0) && (current_time != start_time)) {
                 avg_temp_hour /= HOUR;
-
-                if (day_count > days_in_month(month, year)) {
-                    delete_oldest_record(db, AVG_TEMPERATURE_HOUR_TABLE);
-                }
-
                 insert_db(db, AVG_TEMPERATURE_HOUR_TABLE, timestamp, avg_temp_hour);
-
                 avg_temp_day += avg_temp_hour;
             }
 
@@ -138,11 +127,6 @@ int main() {
                 day_count++;
                 avg_temp_day /= DAY;
                 timestamp[10] = '\0';
-
-                if (day_count > (is_leap_year(year) ? 366 : 365)) {
-                    delete_oldest_record(db, AVG_TEMPERATURE_DAY_TABLE);
-                }
-
                 insert_db(db, AVG_TEMPERATURE_DAY_TABLE, timestamp, avg_temp_day);
             }
         }

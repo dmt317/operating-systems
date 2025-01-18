@@ -30,23 +30,6 @@ char *read_file(const char *filename) {
   return content;
 }
 
-void delete_oldest_record(sqlite3 *db, const char *table_name) {
-  char sql[256];
-  snprintf(sql, sizeof(sql),
-           "DELETE FROM %s WHERE id = (SELECT id FROM %s ORDER BY id ASC LIMIT 1);",
-           table_name, table_name);
-
-  char *err_msg = NULL;
-  int rc = sqlite3_exec(db, sql, NULL, NULL, &err_msg);
-  if (rc != SQLITE_OK) {
-    fprintf(stderr, "Error deleting raw: %s\n", err_msg);
-    sqlite3_free(err_msg);
-    return;
-  }
-
-  printf("Oldest record has been deleted from table '%s'.\n", table_name);
-}
-
 void insert_db(sqlite3 *db, const char *table_name, char* timestamp, double temperature) {
   char sql[128];
   snprintf(sql, sizeof(sql), "INSERT INTO %s (timestamp, temperature) VALUES (?, ?);", table_name);
