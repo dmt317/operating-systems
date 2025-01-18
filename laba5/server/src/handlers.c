@@ -93,12 +93,6 @@ void handle_average_temperature(int client_socket, sqlite3 *db, const char *tabl
 
     cJSON_Delete(json_array);
     free(json_string);
-    #ifdef _WIN32
-        closesocket(client_socket);
-    #else
-        close(client_socket);
-    #endif
-
 }
 
 void handle_current_temperature(int client_socket, sqlite3 *db) {
