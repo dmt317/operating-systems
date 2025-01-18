@@ -88,12 +88,8 @@ int main() {
     double avg_temp_hour = 0.0;
     double avg_temp_day = 0.0;
 
-    int day_count = 0;
-
     time_t start_time = time(NULL);
     struct tm *local_time = localtime(&start_time);
-    int month = local_time->tm_mon + 1;
-    int year = local_time->tm_year + 1900;
 
     #if _WIN32
         HANDLE fd = init_port_windows();
@@ -124,8 +120,7 @@ int main() {
             }
 
             if (((current_time - start_time) % DAY == 0) && (current_time != start_time)) {
-                day_count++;
-                avg_temp_day /= DAY;
+                avg_temp_day /= 24;
                 timestamp[10] = '\0';
                 insert_db(db, AVG_TEMPERATURE_DAY_TABLE, timestamp, avg_temp_day);
             }

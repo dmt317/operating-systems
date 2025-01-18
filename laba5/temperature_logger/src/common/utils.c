@@ -25,20 +25,3 @@ void get_timestamp(char *timestamp, size_t size, time_t current_time) {
         }
     #endif
 }
-
-int is_leap_year(int year) {
-    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
-        return 1;
-    }
-    return 0;
-}
-
-int days_in_month(int month, int year) {
-    int days_in_months[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-    if (is_leap_year(year) && month == 2) {
-        return 29;
-    }
-
-    return days_in_months[month - 1];
-}
