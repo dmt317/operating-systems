@@ -1,15 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "cJSON.h"
-
-#ifdef _WIN32
-    #include <winsock2.h>
-#else
-    #include <unistd.h>
-    #include <sys/socket.h>
-#endif
-
 #include "handlers.h"
 
 #define BUFFER_SIZE 1024

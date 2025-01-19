@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #ifdef _WIN32
     #include <windows.h>
 #else
@@ -15,15 +13,9 @@
 #include "server.h"
 #include "globals.h"
 
-#define TEMPERATURE_TABLE "temperature"
-#define AVG_TEMPERATURE_HOUR_TABLE "avg_temperature_hour"
-#define AVG_TEMPERATURE_DAY_TABLE "avg_temperature_day"
-
 #define SLEEP_INTERVAL 1
 #define HOUR 3600
 #define DAY 86400
-
-#define DB_PATH "../database/temperature.db"
 
 volatile sig_atomic_t running = 1;
 

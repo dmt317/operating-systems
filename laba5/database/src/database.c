@@ -3,9 +3,6 @@
 
 #include "database.h"
 
-#define SQL_FILE "../database/scripts/queries.sql"
-#define DB_PATH "../database/temperature.db"
-
 char *read_file(const char *filename) {
   FILE *file = fopen(filename, "r");
   if (!file) {

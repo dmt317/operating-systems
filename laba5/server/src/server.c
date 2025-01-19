@@ -1,16 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#ifdef _WIN32
-    #include <windows.h>
-    #include <winsock2.h>
-    typedef int socklen_t;
-#else
-    #include <unistd.h>
-    #include <arpa/inet.h>
-    #include <sys/socket.h>
-#endif
-
+#include "server.h"
 #include "handlers.h"
 #include "globals.h"
 

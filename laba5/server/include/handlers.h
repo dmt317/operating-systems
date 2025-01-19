@@ -1,7 +1,16 @@
 #ifndef HANDLERS_H
 #define HANDLERS_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "cJSON.h"
 #include <sqlite3.h>
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <sys/socket.h>
+#endif
 
 void send_response(int client_socket, const char *status, const char *response);
 
