@@ -4,4 +4,8 @@ mkdir build
 cd build
 
 qmake laba6.pro
-nmake
+make
+
+cd release
+
+laba6.exe

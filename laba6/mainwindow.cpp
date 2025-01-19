@@ -12,6 +12,8 @@
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QLegend>
 
+using namespace QtCharts;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
