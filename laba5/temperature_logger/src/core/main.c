@@ -1,9 +1,6 @@
-#include <stdlib.h>
 #ifdef _WIN32
     #include <windows.h>
 #else
-    #include <unistd.h>
-    #include <signal.h>
     #include <pthread.h>
 #endif
 
@@ -50,13 +47,7 @@ int main() {
         }
     #endif
 
-    init_database();
-
-    sqlite3 *db;
-    if (sqlite3_open(DB_PATH, &db) != SQLITE_OK) {
-         fprintf(stderr, "Database connection error: %s\n", sqlite3_errmsg(db));
-         return 1;
-    }
+    sqlite3 *db = init_database();
 
     #ifdef _WIN32
         HANDLE server_thread;
@@ -118,12 +109,6 @@ int main() {
             }
         }
     }
-
-    #if _WIN32
-        CloseHandle(fd);
-    #else
-        close(fd);
-    #endif
 
     sqlite3_close(db);
 

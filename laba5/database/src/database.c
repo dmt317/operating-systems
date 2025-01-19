@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "database.h"
 
 char *read_file(const char *filename) {
@@ -64,7 +61,7 @@ void insert_db(sqlite3 *db, const char *table_name, char* timestamp, double temp
   sqlite3_finalize(stmt);
 }
 
-int init_database() {
+sqlite3 *init_database() {
   sqlite3 *db;
   char *err_msg = 0;
 
@@ -72,13 +69,13 @@ int init_database() {
   if (rc != SQLITE_OK) {
     fprintf(stderr, "Error opening database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
   char *sql = read_file(SQL_FILE);
   if (!sql) {
     sqlite3_close(db);
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -88,10 +85,9 @@ int init_database() {
     fprintf(stderr, "Queries execution error %s\n", err_msg);
     sqlite3_free(err_msg);
     sqlite3_close(db);
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
   fprintf(stdout, "Database initialized and tables created successfully.\n");
-  sqlite3_close(db);
-  return 0;
+  return db;
 }
